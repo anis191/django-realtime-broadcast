@@ -1,0 +1,16 @@
+[project]
+name = "django-realtime-broadcast"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "celery>=5.6.3",
+    "channels-redis>=4.3.0",
+    "django>=6.0.3",
+    "django-celery-beat>=2.9.0",
+    "django-redis>=6.0.0",
+    "python-decouple>=3.8",
+    "uvicorn[standard]>=0.44.0",
+    "whitenoise>=6.12.0",
+]
