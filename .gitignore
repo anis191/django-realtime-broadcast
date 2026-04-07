@@ -27,3 +27,18 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Celery
+celerybeat.pid
+celerybeat-schedule
+celerybeat.pid.lock
+
+# Docker
+.dockerignore
+
+# Redis data (managed by Docker volume)
+redis_data/
+
+note.txt
+
+staticfiles/

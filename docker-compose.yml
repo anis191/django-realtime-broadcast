@@ -1,0 +1,86 @@
+services:
+
+  redis:
+    image: redis:8.2-bookworm
+    container_name: redis_server
+    command: >
+      sh -c "
+        cp /usr/local/etc/redis/redis.conf /tmp/redis.conf &&
+        sed -i 's|YOUR_SECURE_REDIS_PASSWORD_HERE|${REDIS_PASSWORD}|g' /tmp/redis.conf &&
+        redis-server /tmp/redis.conf
+      "
+    # command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis_data:/data
+    restart: always
+  
+  django_project:
+    container_name: django_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: realtime-django
+    volumes:
+      - .:/django-broadcast
+      - /django-broadcast/.venv
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    command: >
+        bash -c "
+        uv run manage.py makemigrations &&
+        uv run manage.py migrate &&
+        uv run manage.py collectstatic --noinput &&
+        uv run uvicorn broadcast.asgi:application --host 0.0.0.0 --port 8000
+        "
+    # command: >
+      # bash -c "
+      # uv run manage.py makemigrations &&
+      # uv run manage.py migrate &&
+      # uv run manage.py collectstatic --noinput &&
+      # uv run uvicorn broadcast.asgi:application --host 0.0.0.0 --port
+      # 8000 --reload --reload-dir /django-broadcast --reload-include '*.html'
+      # --reload-include '*.css' --reload-include '*.js'
+      # --reload-exclude /django-broadcast/.venv
+      # "
+    restart: always
+  
+  celery_worker:
+    container_name: celery_server
+    image: realtime-django
+    env_file:
+      - .env
+    command: uv run celery -A broadcast worker -l info
+    depends_on:
+      - redis
+      - django_project
+    volumes:
+      - .:/django-broadcast
+      - /django-broadcast/.venv
+    restart: unless-stopped
+  
+  celery_beat:
+    container_name: celery_beat_server
+    image: realtime-django
+    env_file:
+      - .env
+    command: uv run celery -A broadcast beat -l info
+    depends_on:
+      - redis
+      - django_project
+    volumes:
+      - .:/django-broadcast
+      - /django-broadcast/.venv
+    restart: unless-stopped
+
+
+volumes:
+  redis_data:
