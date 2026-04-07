@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,9 +92,11 @@ CACHES = {
         "OPTIONS" : {
             "CLIENT_CLASS" : "django_redis.client.DefaultClient",
         },
-        "KEY_PREFIX" : "broadcast1"
+        "KEY_PREFIX" : "broadcast"
     }
 }
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
