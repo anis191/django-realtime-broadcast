@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from decouple import config
 
+REDIS_URL = config("REDIS_URL")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django-celery-beat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -67,8 +71,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'broadcast.wsgi.application'
+# WSGI_APPLICATION = 'broadcast.wsgi.application'
+ASGI_APPLICATION = 'broadcast.asgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
+# cache:
+CACHES = {
+    "default" : {
+        "BACKEND" : "django_redis.cache.RedisCache",
+        "LOCATION" : REDIS_URL,
+        "OPTIONS" : {
+            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX" : "broadcast1"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
