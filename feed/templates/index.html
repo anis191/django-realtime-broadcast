@@ -58,13 +58,45 @@
   .search-box:focus-within{background:#000;border-color:#1d9bf0;color:#1d9bf0;}
   .search-box input{background:none;border:none;outline:none;color:#e7e9ea;font-size:15px;flex:1;}
   .search-box input::placeholder{color:#71767b;}
+  
+  /* ==================== IMPROVED TRENDING SECTION ==================== */
   .trend-card{background:#16181c;border-radius:16px;overflow:hidden;margin-bottom:16px;}
   .trend-header{padding:16px;font-size:20px;font-weight:700;border-bottom:1px solid #2f3336;}
-  .trend-item{padding:12px 16px;cursor:pointer;transition:background .15s;}
+  
+  .trend-item{
+    padding:14px 16px;
+    cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity:0;
+    transform:translateY(8px);
+    border-bottom:1px solid #2f3336;
+  }
+  .trend-item:last-child{border-bottom:none;}
   .trend-item:hover{background:#1d1f23;}
-  .trend-cat{font-size:13px;color:#71767b;}
-  .trend-name{font-size:15px;font-weight:700;color:#e7e9ea;margin:2px 0;}
-  .trend-count{font-size:13px;color:#71767b;}
+  
+  .trend-cat{
+    font-size:13px;
+    color:#71767b;
+    margin-bottom:2px;
+  }
+  .trend-name{
+    font-size:15px;
+    font-weight:700;
+    color:#e7e9ea;
+    line-height:1.3;
+  }
+  .trend-count{
+    font-size:13px;
+    color:#71767b;
+    margin-top:4px;
+  }
+  
+  /* Animation classes */
+  .trend-item.animate-in{
+    opacity:1;
+    transform:translateY(0);
+  }
+
   .sidebar-profile{display:flex;align-items:center;gap:12px;padding:12px;border-radius:9999px;cursor:pointer;transition:background .15s;margin-top:auto;margin-bottom:8px;}
   .sidebar-profile:hover{background:#1d1f23;}
   .profile-name{font-weight:700;font-size:15px;color:#e7e9ea;}
@@ -80,7 +112,6 @@
 </head>
 <body>
 <div class="layout">
-
   <!-- Left Sidebar -->
   <aside class="sidebar">
     <div class="nav-logo">
@@ -128,12 +159,10 @@
     <div style="display:flex;align-items:center;padding:0 16px;height:53px;backdrop-filter:blur(12px);background:rgba(0,0,0,0.65);position:sticky;top:0;z-index:10;border-bottom:1px solid #2f3336;">
       <h2 style="font-size:20px;font-weight:700;">Home</h2>
     </div>
-
     <div class="tab-bar">
       <div class="tab active">For you</div>
       <div class="tab">Following</div>
     </div>
-
     <!-- Compose -->
     <div class="compose-area">
       <div class="tweet-avatar" style="background:#1d9bf0;">
@@ -142,13 +171,7 @@
       <div class="compose-right">
         <form method="post">
           {% csrf_token %}
-          <textarea
-            class="compose-textarea"
-            name="content"
-            maxlength="280"
-            placeholder="What is happening?!"
-            id="compose-input"
-          ></textarea>
+          <textarea class="compose-textarea" name="content" maxlength="280" placeholder="What is happening?!" id="compose-input"></textarea>
           <div class="compose-actions">
             <div class="compose-icons">
               <button type="button" class="icon-btn">
@@ -173,7 +196,6 @@
         </form>
       </div>
     </div>
-
     <!-- Posts -->
     <div id="posts-container">
     {% if posts %}
@@ -191,21 +213,10 @@
           </div>
           <p class="tweet-text">{{ post.content }}</p>
           <div class="tweet-actions">
-            <button class="action-btn reply">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <span>{{ post.pk|add:3 }}</span>
-            </button>
-            <button class="action-btn retweet">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-              <span>{{ post.pk|add:12 }}</span>
-            </button>
-            <button class="action-btn like">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              <span>{{ post.pk|add:47 }}</span>
-            </button>
-            <button class="action-btn share">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-            </button>
+            <button class="action-btn reply"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{{ post.pk|add:3 }}</span></button>
+            <button class="action-btn retweet"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span>{{ post.pk|add:12 }}</span></button>
+            <button class="action-btn like"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>{{ post.pk|add:47 }}</span></button>
+            <button class="action-btn share"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
           </div>
         </div>
         <button style="background:none;border:none;color:#71767b;cursor:pointer;padding:4px;border-radius:9999px;align-self:flex-start;transition:background .15s;" onmouseover="this.style.background='#1d1f23'" onmouseout="this.style.background='none'">
@@ -228,85 +239,16 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" placeholder="Search"/>
     </div>
-    <div class="trend-card">
-      <div class="trend-header">What's happening</div>
-      <div class="trend-item">
-        <div class="trend-cat">Trending in Tech</div>
-        <div class="trend-name">#Django</div>
-        <div class="trend-count">24.5K posts</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-cat">Trending</div>
-        <div class="trend-name">#Python</div>
-        <div class="trend-count">118K posts</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-cat">Technology · Trending</div>
-        <div class="trend-name">#TailwindCSS</div>
-        <div class="trend-count">9,821 posts</div>
-      </div>
-    </div>
-    <div class="trend-card">
-      <div class="trend-header">Who to follow</div>
-      <div class="trend-item" style="display:flex;align-items:center;gap:12px;">
-        <div class="tweet-avatar" style="background:#794bc4;width:40px;height:40px;font-size:14px;">D</div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:15px;color:#e7e9ea;">DjangoProject</div>
-          <div style="font-size:13px;color:#71767b;">@djangoproject</div>
-        </div>
-        <button style="background:#e7e9ea;color:#0f1419;border:none;border-radius:9999px;padding:6px 16px;font-weight:700;font-size:14px;cursor:pointer;">Follow</button>
-      </div>
+    <div id="trendingSection" class="trend-card">
+      <div class="trend-header">What's trending?</div>
     </div>
     <p style="font-size:13px;color:#71767b;padding:4px 16px;">djangoLive · Made with Django</p>
   </div>
 </div>
 
-{% comment %} <script> {% endcomment %}
-  {% comment %} const feed = document.getElementById("feed"); {% endcomment %}
-  {% comment %}  {% endcomment %}
-  {% comment %} const socket = new WebSocket("ws://localhost:8000/ws/feed/") {% endcomment %}
-  {% comment %} socket.onopen = () => console.log("WebSocket connect") {% endcomment %}
-  {% comment %} socket.onerror = (e) => console.log("WebSocket error", e) {% endcomment %}
-  {% comment %} socket.onmessage = function(e){ {% endcomment %}
-    {% comment %} const data = JSON.parse(e.data) {% endcomment %}
-    {% comment %} const content = data.content || data.message {% endcomment %}
-    {% comment %} const postType = data.post_type || "normal" {% endcomment %}
-    {% comment %} const username = data.username || "Guest" {% endcomment %}
-    {% comment %} console.log(content) {% endcomment %}
-{% comment %}  {% endcomment %}
-    {% comment %} const postDiv = document.createElement("div") {% endcomment %}
-{% comment %}  {% endcomment %}
-  {% comment %} } {% endcomment %}
-{% comment %}  {% endcomment %}
-  {% comment %} const input = document.getElementById('compose-input'); {% endcomment %}
-  {% comment %} const arc = document.getElementById('char-arc'); {% endcomment %}
-  {% comment %} const left = document.getElementById('char-left'); {% endcomment %}
-  {% comment %} const btn = document.getElementById('post-btn'); {% endcomment %}
-  {% comment %} const circumference = 75.4; {% endcomment %}
-{% comment %}  {% endcomment %}
-  {% comment %} input && input.addEventListener('input', () => { {% endcomment %}
-    {% comment %} const len = input.value.length; {% endcomment %}
-    {% comment %} const remaining = 280 - len; {% endcomment %}
-    {% comment %} const offset = circumference * (1 - len / 280); {% endcomment %}
-    {% comment %} arc.style.strokeDashoffset = offset; {% endcomment %}
-    {% comment %} arc.style.stroke = remaining <= 20 ? '#f4212e' : remaining <= 60 ? '#ffd400' : '#1d9bf0'; {% endcomment %}
-    {% comment %} left.textContent = remaining <= 60 ? remaining : ''; {% endcomment %}
-    {% comment %} left.style.color = remaining <= 20 ? '#f4212e' : '#71767b'; {% endcomment %}
-    {% comment %} btn.disabled = len === 0 || len > 280; {% endcomment %}
-  {% comment %} }); {% endcomment %}
-{% comment %}  {% endcomment %}
-  {% comment %} document.querySelectorAll('.tab').forEach(t => { {% endcomment %}
-    {% comment %} t.addEventListener('click', () => { {% endcomment %}
-      {% comment %} document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); {% endcomment %}
-      {% comment %} t.classList.add('active'); {% endcomment %}
-    {% comment %} }); {% endcomment %}
-  {% comment %} }); {% endcomment %}
-{% comment %} </script> {% endcomment %}
-
 <script>
+  const trendingSection = document.getElementById("trendingSection");
   const postsContainer = document.getElementById("posts-container");
-  const emptyState = document.getElementById("empty-state");
-
   const socket = new WebSocket("ws://localhost:8000/ws/feed/");
 
   socket.onopen = () => console.log("WebSocket connected");
@@ -327,10 +269,43 @@
 
   socket.onmessage = function (e) {
     const data = JSON.parse(e.data);
+    const postType = data.post_type || "normal";
 
+    // ====================== TRENDING ROTATION (Improved + Animation) ======================
+    if (postType === "trending") {
+      // Fade out old items
+      const oldItems = trendingSection.querySelectorAll(".trend-item");
+      oldItems.forEach(item => {
+        item.style.transition = "all 0.3s ease";
+        item.style.opacity = "0";
+        item.style.transform = "translateY(-8px)";
+      });
+
+      // Wait for fade out then replace
+      setTimeout(() => {
+        oldItems.forEach(item => item.remove());
+
+        // Create and animate new trending items
+        const postDiv = document.createElement("div");
+        postDiv.className = "trend-item";
+        postDiv.innerHTML = `
+          <div class="trend-name">#${data.rank || ""} ${escapeHtml(data.content)}</div>
+          <div class="trend-count">Trending • ${escapeHtml(data.username)}</div>`;
+        
+        trendingSection.appendChild(postDiv);
+
+        // Trigger animation
+        setTimeout(() => {
+          postDiv.classList.add("animate-in");
+        }, 10);
+      }, 320);
+
+      return; // Do NOT add to main feed
+    }
+
+    // ====================== NORMAL NEW POST (unchanged) ======================
     const content = data.content || data.message || "";
     const username = data.username || "Guest";
-    const postType = data.post_type || "normal";
     const createdAt = data.created_at || "just now";
     const handle = data.handle || (username !== "Guest" ? `@${username.toLowerCase()}` : "@guest");
     const firstLetter = username.charAt(0).toUpperCase() || "G";
@@ -342,7 +317,6 @@
       <div class="tweet-avatar" style="background:${avatarColor};">
         ${escapeHtml(firstLetter)}
       </div>
-
       <div class="tweet-body">
         <div class="tweet-header">
           <span class="tweet-name">${escapeHtml(username)}</span>
@@ -350,84 +324,59 @@
           <span class="tweet-dot">·</span>
           <span class="tweet-time">${escapeHtml(createdAt)}</span>
         </div>
-
         <p class="tweet-text">${escapeHtml(content)}</p>
-
         <div class="tweet-actions">
           <button class="action-btn reply" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span>0</span>
           </button>
-
           <button class="action-btn retweet" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <polyline points="17 1 21 5 17 9"/>
-              <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-              <polyline points="7 23 3 19 7 15"/>
-              <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
             <span>0</span>
           </button>
-
           <button class="action-btn like" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span>0</span>
           </button>
-
           <button class="action-btn share" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-              <polyline points="16 6 12 2 8 6"/>
-              <line x1="12" y1="2" x2="12" y2="15"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
           </button>
         </div>
       </div>
-
-      <button
-        type="button"
-        style="background:none;border:none;color:#71767b;cursor:pointer;padding:4px;border-radius:9999px;align-self:flex-start;transition:background .15s;"
-        onmouseover="this.style.background='#1d1f23'"
-        onmouseout="this.style.background='none'"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="5" r="1.5"/>
-          <circle cx="12" cy="12" r="1.5"/>
-          <circle cx="12" cy="19" r="1.5"/>
-        </svg>
+      <button type="button" style="background:none;border:none;color:#71767b;cursor:pointer;padding:4px;border-radius:9999px;align-self:flex-start;transition:background .15s;" onmouseover="this.style.background='#1d1f23'" onmouseout="this.style.background='none'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
       </button>
     `;
 
-    if (emptyState) {
-      emptyState.remove();
-    }
+    const emptyState = postsContainer.querySelector("div[style*='padding:48px']");
+    if (emptyState) emptyState.remove();
 
     if (postsContainer) {
       postsContainer.prepend(postDiv);
     }
   };
 
+  // Character counter (unchanged)
   const input = document.getElementById('compose-input');
   const arc = document.getElementById('char-arc');
   const left = document.getElementById('char-left');
   const btn = document.getElementById('post-btn');
   const circumference = 75.4;
 
-  input && input.addEventListener('input', () => {
-    const len = input.value.length;
-    const remaining = 280 - len;
-    const offset = circumference * (1 - len / 280);
-    arc.style.strokeDashoffset = offset;
-    arc.style.stroke = remaining <= 20 ? '#f4212e' : remaining <= 60 ? '#ffd400' : '#1d9bf0';
-    left.textContent = remaining <= 60 ? remaining : '';
-    left.style.color = remaining <= 20 ? '#f4212e' : '#71767b';
-    btn.disabled = len === 0 || len > 280;
-  });
+  if (input) {
+    input.addEventListener('input', () => {
+      const len = input.value.length;
+      const remaining = 280 - len;
+      const offset = circumference * (1 - len / 280);
+      arc.style.strokeDashoffset = offset;
+      arc.style.stroke = remaining <= 20 ? '#f4212e' : remaining <= 60 ? '#ffd400' : '#1d9bf0';
+      left.textContent = remaining <= 60 ? remaining : '';
+      left.style.color = remaining <= 20 ? '#f4212e' : '#71767b';
+      btn.disabled = len === 0 || len > 280;
+    });
+  }
 
+  // Tab switching (unchanged)
   document.querySelectorAll('.tab').forEach(t => {
     t.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
