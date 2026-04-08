@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>djangoLive</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+  body{background:#000;color:#e7e9ea;min-height:100vh;}
+  .layout{display:flex;max-width:1200px;margin:0 auto;}
+  .sidebar{width:275px;padding:0 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px;padding-top:4px;}
+  .main{flex:1;max-width:600px;border-left:1px solid #2f3336;border-right:1px solid #2f3336;min-height:100vh;}
+  .right-sidebar{width:350px;padding:0 16px;padding-top:12px;}
+  .nav-item{display:flex;align-items:center;gap:20px;padding:12px;border-radius:9999px;cursor:pointer;transition:background .15s;font-size:20px;font-weight:400;color:#e7e9ea;text-decoration:none;}
+  .nav-item:hover{background:#1d1f23;}
+  .nav-item.active{font-weight:700;}
+  .nav-icon{width:26px;height:26px;flex-shrink:0;}
+  .nav-logo{padding:12px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;width:52px;border-radius:9999px;cursor:pointer;transition:background .15s;}
+  .nav-logo:hover{background:#1d1f23;}
+  .tweet-btn{background:#1d9bf0;color:#fff;border:none;border-radius:9999px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;width:90%;margin-top:4px;transition:background .15s;}
+  .tweet-btn:hover{background:#1a8cd8;}
+  .compose-area{padding:16px;border-bottom:1px solid #2f3336;display:flex;gap:12px;}
+  .compose-right{flex:1;}
+  .compose-textarea{width:100%;background:transparent;border:none;color:#e7e9ea;font-size:20px;resize:none;outline:none;min-height:52px;line-height:1.5;}
+  .compose-textarea::placeholder{color:#71767b;}
+  .compose-actions{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #2f3336;margin-top:8px;}
+  .compose-icons{display:flex;gap:4px;}
+  .icon-btn{background:none;border:none;color:#1d9bf0;cursor:pointer;padding:8px;border-radius:9999px;transition:background .15s;display:flex;align-items:center;justify-content:center;}
+  .icon-btn:hover{background:rgba(29,155,240,.1);}
+  .post-btn{background:#1d9bf0;color:#fff;border:none;border-radius:9999px;padding:8px 18px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;}
+  .post-btn:hover{background:#1a8cd8;}
+  .post-btn:disabled{opacity:0.5;cursor:default;}
+  .char-ring{position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+  .char-text{font-size:12px;color:#71767b;}
+  .tab-bar{display:flex;border-bottom:1px solid #2f3336;}
+  .tab{flex:1;text-align:center;padding:16px;color:#71767b;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s;border-bottom:2px solid transparent;}
+  .tab:hover{background:#080808;}
+  .tab.active{color:#e7e9ea;font-weight:700;border-bottom:2px solid #1d9bf0;}
+  .tweet-card{padding:16px;border-bottom:1px solid #2f3336;display:flex;gap:12px;cursor:pointer;transition:background .15s;}
+  .tweet-card:hover{background:#080808;}
+  .tweet-avatar{width:40px;height:40px;border-radius:9999px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;}
+  .tweet-body{flex:1;min-width:0;}
+  .tweet-header{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+  .tweet-name{font-weight:700;font-size:15px;color:#e7e9ea;}
+  .tweet-handle{font-size:15px;color:#71767b;}
+  .tweet-dot{color:#71767b;font-size:15px;}
+  .tweet-time{font-size:15px;color:#71767b;}
+  .tweet-text{margin-top:4px;font-size:15px;line-height:1.5;color:#e7e9ea;word-break:break-word;}
+  .tweet-actions{display:flex;justify-content:space-between;max-width:425px;margin-top:12px;}
+  .action-btn{display:flex;align-items:center;gap:6px;color:#71767b;font-size:13px;cursor:pointer;padding:6px;border-radius:9999px;transition:all .15s;border:none;background:none;}
+  .action-btn:hover.reply{color:#1d9bf0;background:rgba(29,155,240,.1);}
+  .action-btn:hover.retweet{color:#00ba7c;background:rgba(0,186,124,.1);}
+  .action-btn:hover.like{color:#f91880;background:rgba(249,24,128,.1);}
+  .action-btn:hover.share{color:#1d9bf0;background:rgba(29,155,240,.1);}
+  .search-box{background:#202327;border:1px solid transparent;border-radius:9999px;padding:10px 16px;display:flex;align-items:center;gap:12px;color:#71767b;font-size:15px;transition:all .15s;}
+  .search-box:focus-within{background:#000;border-color:#1d9bf0;color:#1d9bf0;}
+  .search-box input{background:none;border:none;outline:none;color:#e7e9ea;font-size:15px;flex:1;}
+  .search-box input::placeholder{color:#71767b;}
+  .trend-card{background:#16181c;border-radius:16px;overflow:hidden;margin-bottom:16px;}
+  .trend-header{padding:16px;font-size:20px;font-weight:700;border-bottom:1px solid #2f3336;}
+  .trend-item{padding:12px 16px;cursor:pointer;transition:background .15s;}
+  .trend-item:hover{background:#1d1f23;}
+  .trend-cat{font-size:13px;color:#71767b;}
+  .trend-name{font-size:15px;font-weight:700;color:#e7e9ea;margin:2px 0;}
+  .trend-count{font-size:13px;color:#71767b;}
+  .sidebar-profile{display:flex;align-items:center;gap:12px;padding:12px;border-radius:9999px;cursor:pointer;transition:background .15s;margin-top:auto;margin-bottom:8px;}
+  .sidebar-profile:hover{background:#1d1f23;}
+  .profile-name{font-weight:700;font-size:15px;color:#e7e9ea;}
+  .profile-handle{font-size:15px;color:#71767b;}
+  @media(max-width:1100px){.right-sidebar{display:none;}}
+  @media(max-width:700px){
+    .sidebar{width:72px;}
+    .sidebar .nav-label,.sidebar .tweet-btn-label,.sidebar .profile-info,.sidebar .profile-dots{display:none;}
+    .sidebar .tweet-btn{width:52px;padding:16px 0;display:flex;align-items:center;justify-content:center;}
+    .sidebar{padding:0 4px;align-items:center;}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+    </div>
+    <a class="nav-item active" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.696L.622 8.807l1.06 1.696L3 9.72V19.5C3 20.881 4.119 22 5.5 22h13c1.381 0 2.5-1.119 2.5-2.5V9.72l1.318.783 1.06-1.696L12 1.696zM12 16.5c-1.933 0-3.5-1.567-3.5-3.5s1.567-3.5 3.5-3.5 3.5 1.567 3.5 3.5-1.567 3.5-3.5 3.5z"/></svg>
+      <span class="nav-label">Home</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="nav-label">Explore</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nav-label">Notifications</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="nav-label">Messages</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-label">Profile</span>
+    </a>
+    <button class="tweet-btn">
+      <span class="tweet-btn-label">Post</span>
+    </button>
+    <div class="sidebar-profile">
+      <div class="tweet-avatar" style="background:#1d9bf0;width:40px;height:40px;font-size:14px;">
+        {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}G{% endif %}
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}</div>
+        <div class="profile-handle">{% if request.user.is_authenticated %}@{{ request.user.username|lower }}{% else %}@guest{% endif %}</div>
+      </div>
+      <span class="profile-dots" style="color:#71767b;font-size:18px;">···</span>
+    </div>
+  </aside>
+
+  <!-- Main Feed -->
+  <main class="main">
+    <div style="display:flex;align-items:center;padding:0 16px;height:53px;backdrop-filter:blur(12px);background:rgba(0,0,0,0.65);position:sticky;top:0;z-index:10;border-bottom:1px solid #2f3336;">
+      <h2 style="font-size:20px;font-weight:700;">Home</h2>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active">For you</div>
+      <div class="tab">Following</div>
+    </div>
+
+    <!-- Compose -->
+    <div class="compose-area">
+      <div class="tweet-avatar" style="background:#1d9bf0;">
+        {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}G{% endif %}
+      </div>
+      <div class="compose-right">
+        <form method="post">
+          {% csrf_token %}
+          <textarea
+            class="compose-textarea"
+            name="content"
+            maxlength="280"
+            placeholder="What is happening?!"
+            id="compose-input"
+          ></textarea>
+          <div class="compose-actions">
+            <div class="compose-icons">
+              <button type="button" class="icon-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </button>
+              <button type="button" class="icon-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div class="char-ring">
+                <svg width="32" height="32" viewBox="0 0 32 32" style="position:absolute;">
+                  <circle cx="16" cy="16" r="12" fill="none" stroke="#2f3336" stroke-width="2"/>
+                  <circle id="char-arc" cx="16" cy="16" r="12" fill="none" stroke="#1d9bf0" stroke-width="2" stroke-dasharray="75.4" stroke-dashoffset="75.4" stroke-linecap="round" transform="rotate(-90 16 16)"/>
+                </svg>
+                <span id="char-left" class="char-text" style="position:relative;z-index:1;"></span>
+              </div>
+              <div style="width:1px;height:28px;background:#2f3336;"></div>
+              <button type="submit" class="post-btn" id="post-btn" disabled>Post</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Posts -->
+    {% if posts %}
+      {% for post in posts %}
+      <article class="tweet-card">
+        <div class="tweet-avatar" style="background:{% cycle '#1d9bf0' '#794bc4' '#00ba7c' '#ff7a00' '#f91880' %};">
+          {{ post.display_name|first|upper }}
+        </div>
+        <div class="tweet-body">
+          <div class="tweet-header">
+            <span class="tweet-name">{{ post.display_name }}</span>
+            <span class="tweet-handle">{% if post.user %}@{{ post.display_name|lower }}{% else %}@guest{% endif %}</span>
+            <span class="tweet-dot">·</span>
+            <span class="tweet-time">{{ post.created_at|timesince }}</span>
+          </div>
+          <p class="tweet-text">{{ post.content }}</p>
+          <div class="tweet-actions">
+            <button class="action-btn reply">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>{{ post.pk|add:3 }}</span>
+            </button>
+            <button class="action-btn retweet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              <span>{{ post.pk|add:12 }}</span>
+            </button>
+            <button class="action-btn like">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span>{{ post.pk|add:47 }}</span>
+            </button>
+            <button class="action-btn share">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+        <button style="background:none;border:none;color:#71767b;cursor:pointer;padding:4px;border-radius:9999px;align-self:flex-start;transition:background .15s;" onmouseover="this.style.background='#1d1f23'" onmouseout="this.style.background='none'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+        </button>
+      </article>
+      {% endfor %}
+    {% else %}
+    <div style="padding:48px 32px;text-align:center;">
+      <p style="font-size:31px;font-weight:800;color:#e7e9ea;margin-bottom:8px;">Welcome to djangoLive!</p>
+      <p style="font-size:15px;color:#71767b;">Be the first one to post something.</p>
+    </div>
+    {% endif %}
+  </main>
+
+  <!-- Right Sidebar -->
+  <div class="right-sidebar">
+    <div class="search-box" style="margin-bottom:12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search"/>
+    </div>
+    <div class="trend-card">
+      <div class="trend-header">What's happening</div>
+      <div class="trend-item">
+        <div class="trend-cat">Trending in Tech</div>
+        <div class="trend-name">#Django</div>
+        <div class="trend-count">24.5K posts</div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Trending</div>
+        <div class="trend-name">#Python</div>
+        <div class="trend-count">118K posts</div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Technology · Trending</div>
+        <div class="trend-name">#TailwindCSS</div>
+        <div class="trend-count">9,821 posts</div>
+      </div>
+    </div>
+    <div class="trend-card">
+      <div class="trend-header">Who to follow</div>
+      <div class="trend-item" style="display:flex;align-items:center;gap:12px;">
+        <div class="tweet-avatar" style="background:#794bc4;width:40px;height:40px;font-size:14px;">D</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:15px;color:#e7e9ea;">DjangoProject</div>
+          <div style="font-size:13px;color:#71767b;">@djangoproject</div>
+        </div>
+        <button style="background:#e7e9ea;color:#0f1419;border:none;border-radius:9999px;padding:6px 16px;font-weight:700;font-size:14px;cursor:pointer;">Follow</button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#71767b;padding:4px 16px;">djangoLive · Made with Django</p>
+  </div>
+</div>
+
+<script>
+  const input = document.getElementById('compose-input');
+  const arc = document.getElementById('char-arc');
+  const left = document.getElementById('char-left');
+  const btn = document.getElementById('post-btn');
+  const circumference = 75.4;
+
+  input && input.addEventListener('input', () => {
+    const len = input.value.length;
+    const remaining = 280 - len;
+    const offset = circumference * (1 - len / 280);
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = remaining <= 20 ? '#f4212e' : remaining <= 60 ? '#ffd400' : '#1d9bf0';
+    left.textContent = remaining <= 60 ? remaining : '';
+    left.style.color = remaining <= 20 ? '#f4212e' : '#71767b';
+    btn.disabled = len === 0 || len > 280;
+  });
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
