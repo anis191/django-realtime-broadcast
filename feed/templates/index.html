@@ -260,6 +260,10 @@
 </div>
 
 <script>
+  const socket = new WebSocket("ws://localhost:8000/ws/feed/")
+  socket.onopen = () => console.log("WebSocket connect")
+  socket.onerror = (e) => console.log("WebSocket error", e)
+
   const input = document.getElementById('compose-input');
   const arc = document.getElementById('char-arc');
   const left = document.getElementById('char-left');
