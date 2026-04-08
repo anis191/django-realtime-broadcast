@@ -10,6 +10,7 @@ dependencies = [
     "django>=6.0.3",
     "django-celery-beat>=2.9.0",
     "django-redis>=6.0.0",
+    "psycopg2-binary>=2.9.11",
     "python-decouple>=3.8",
     "uvicorn[standard]>=0.44.0",
     "whitenoise>=6.12.0",
